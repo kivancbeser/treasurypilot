@@ -34,3 +34,27 @@ test('CSV escapes user content and neutralizes formula prefixes', async () => {
   assert.ok(csv.includes('"\'=SUM(1,2) ""demo"""'));
   assert.ok(csv.includes('"1.00"'));
 });
+
+test('cancellation releases funds and cannot be performed by another member', async () => {
+  const { cancelPayment, validateState } = await import('../src/treasury.js');
+  const state = initialState(); deposit(state, 100000);
+  const input = { bucketId: 'development', amount: 30000, recipient: wallet, purpose: 'Build', requester: 'Kivanc' };
+  const p = requestPayment(state, input);
+  assert.throws(() => cancelPayment(state, p.id, 'Alex'));
+  cancelPayment(state, p.id, 'Kivanc');
+  assert.throws(() => resolvePayment(state, p.id, 'Alex', true));
+  assert.doesNotThrow(() => requestPayment(state, input));
+  assert.equal(validateState(state), true);
+});
+test('saved state validation rejects inconsistent balances, malformed records and duplicate IDs', async () => {
+  const { exampleState, validateState } = await import('../src/treasury.js');
+  const state = exampleState(); assert.equal(validateState(state), true);
+  for (const corrupt of [s => s.buckets[0].balance++, s => s.payments.push(s.payments[0]), s => s.payments[0].amount = -1, s => s.payments[0].recipient = null, s => s.buckets[0].percent = 200, s => s.events.push({}), s => s.payments[0].amount = 9999999]) {
+    const copy = structuredClone(state); corrupt(copy); assert.equal(validateState(copy), false);
+  }
+});
+test('zero-address recipients are rejected without reserving any budget', () => {
+  const state = initialState(); deposit(state, 100000);
+  assert.throws(() => requestPayment(state, { bucketId: 'development', amount: 100, recipient: '0x' + '0'.repeat(40), purpose: 'Build', requester: 'Kivanc' }));
+  assert.equal(state.payments.length, 0);
+});
