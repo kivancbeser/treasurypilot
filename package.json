@@ -9,9 +9,15 @@
     "test": "node --test",
     "add-user": "node scripts/add-user.mjs",
     "setup:local": "node scripts/setup-local.mjs",
-    "build:demo": "node scripts/build-demo.mjs"
+    "build:demo": "node scripts/build-demo.mjs",
+    "compile:contract": "node scripts/compile-contract.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "ethers": "^6.17.0",
+    "ganache": "^7.9.2",
+    "solc": "^0.8.30"
   }
 }

@@ -12,7 +12,7 @@ TreasuryPilot is an early-stage treasury operations prototype for teams launchin
 
 ## Run locally
 
-Requires Node.js 20 or newer. No packages or API keys needed.
+Requires Node.js 20 or newer. Run `npm install` to install development test tooling; no API keys are needed. The browser demo itself has no runtime package dependencies.
 
 ```sh
 npm start
@@ -77,7 +77,7 @@ On `/`, roles are simulated in one browser, not authenticated. On `/beta`, provi
 
 ## Technical review
 
-See [architecture and trust boundaries](docs/ARCHITECTURE.md). Twelve automated tests (including an HTTP integration scenario) cover the core accounting, policy, lifecycle, storage validation, and export behavior. These are not an independent security audit.
+See [architecture and trust boundaries](docs/ARCHITECTURE.md). Thirteen automated tests (including an HTTP integration scenario) cover the core accounting, policy, lifecycle, storage validation, and export behavior. These are not an independent security audit.
 
 ## Planned next steps
 
@@ -100,3 +100,7 @@ MIT. See LICENSE.
 ## Static demo deployment
 
 `npm run build:demo` creates an allowlisted `dist/` containing only the demo HTML, CSS and two browser modules. `vercel.json` deploys this directory; `.vercelignore` excludes local records, credentials, account provisioning, and the beta backend. The public build replaces the local beta navigation with a source-code link. No account files or server endpoints are published.
+
+## Contract prototype and pilot preparation
+
+A native-asset Solidity vault prototype now has a local-EVM integration test covering deposits, reservations, distinct-role review, recipient withdrawal, cancellation and policy changes. This is not a public testnet deployment. See [testnet preparation](docs/TESTNET.md) and the [unsent pilot invitation](docs/PILOT.md). No external pilot acceptance is claimed.
