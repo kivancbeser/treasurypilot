@@ -8,7 +8,8 @@
     "start": "node server.mjs",
     "test": "node --test",
     "add-user": "node scripts/add-user.mjs",
-    "setup:local": "node scripts/setup-local.mjs"
+    "setup:local": "node scripts/setup-local.mjs",
+    "build:demo": "node scripts/build-demo.mjs"
   },
   "engines": {
     "node": ">=20"

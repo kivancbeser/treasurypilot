@@ -2,6 +2,10 @@
 
 **Turn project revenue into accountable team budgets.**
 
+[Try the public interactive demo](https://treasurypilot-gamma.vercel.app) · [Source code](https://github.com/kivancbeser/treasurypilot)
+
+The public demo uses simulated browser-local data and requires no account. The authenticated team beta runs locally and is not deployed to Vercel.
+
 TreasuryPilot is an early-stage treasury operations prototype for teams launching in emerging ecosystems, including Ascend / Elysium. It demonstrates revenue allocation, budget reservations, two-person payment review, and a readable activity history.
 
 **Status: interactive demo plus an authenticated local team beta. No blockchain integration, wallet authentication, custody, or real transfers. Not affiliated with or endorsed by Ascend, Elysium, or Kinetiq.**
@@ -90,3 +94,7 @@ Kivanc — Founder · [X: @coinstampp](https://x.com/coinstampp) · Discord: `ki
 ## License
 
 MIT. See LICENSE.
+
+## Static demo deployment
+
+`npm run build:demo` creates an allowlisted `dist/` containing only the demo HTML, CSS and two browser modules. `vercel.json` deploys this directory; `.vercelignore` excludes local records, credentials, account provisioning, and the beta backend. The public build replaces the local beta navigation with a source-code link. No account files or server endpoints are published.

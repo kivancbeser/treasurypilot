@@ -1,0 +1,14 @@
+data/
+.env
+.env.*
+.git/
+node_modules/
+backend/
+scripts/add-user.mjs
+scripts/setup-local.mjs
+server.mjs
+beta.html
+src/beta.js
+tests/
+preview.png
+beta-preview.png
