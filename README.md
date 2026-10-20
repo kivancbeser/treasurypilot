@@ -4,7 +4,7 @@
 
 TreasuryPilot is an early-stage treasury operations prototype for teams launching in emerging ecosystems, including Ascend / Elysium. It demonstrates revenue allocation, budget reservations, two-person payment review, and a readable activity history.
 
-**Status: interactive local prototype. No blockchain integration, wallet authentication, custody, or real transfers. Not affiliated with or endorsed by Ascend, Elysium, or Kinetiq.**
+**Status: interactive demo plus an authenticated local team beta. No blockchain integration, wallet authentication, custody, or real transfers. Not affiliated with or endorsed by Ascend, Elysium, or Kinetiq.**
 
 ## Run locally
 
@@ -17,6 +17,30 @@ npm start
 Open http://127.0.0.1:4173. Run accounting and approval checks with `npm test`.
 
 ![TreasuryPilot dashboard](preview.png)
+
+## Local team beta
+
+```sh
+npm run setup:local
+npm start
+```
+
+Open http://127.0.0.1:4173/beta. The setup command generates unique passwords and stores them in `data/local-access.txt` (excluded from Git; local file permissions 0600). It creates `kivanc` as admin and two fictional test accounts, `builder-demo` and `reviewer-demo`. Setup refuses to replace existing accounts. Do not publish the access file or use real financial information.
+
+- **Admin:** record simulated revenue, change policy, request payments, review another user's requests.
+- **Requester:** request and cancel their own pending payments.
+- **Reviewer:** approve or reject another user's pending payments.
+- Every account can read this single shared workspace and export payments. There is no organization isolation in this beta.
+
+Use separate browser sessions or sign out and back in to test different accounts. The server derives the actor from the session; client-supplied requester names cannot impersonate another account. Self-approval is rejected even for admins.
+
+To provision another local account, run `node scripts/add-user.mjs username requester` (or `admin` / `reviewer`) and provide a 12–128 character password on standard input, then EOF. Use a terminal that does not echo input or a password manager pipeline. Do not put passwords in command arguments.
+
+Data persists in `data/treasury.json`. `TREASURY_DATA` can select a different path. Run only one process per data file and stop it before running provisioning commands. Keep local backups. This beta has no account recovery, MFA, invitations, public signup, or production deployment configuration. Sessions expire after eight hours and are invalidated on restart. Login throttling is in memory.
+
+**Local use only:** the server binds to loopback HTTP. Do not expose or reverse-proxy it to the internet. Production deployment requires HTTPS and Secure cookies, a durable database and distributed coordination, hardened authentication, and independent security review.
+
+![Local team beta](beta-preview.png)
 
 ## Two-minute walkthrough
 
@@ -43,16 +67,16 @@ Demo state is stored in localStorage. Reset demo clears it after confirmation. D
 
 ## Limits and trust model
 
-Roles are simulated in one browser, not authenticated. Browser storage can be edited and is not an immutable audit trail. Wallet address validation checks format only. Accounting uses two decimal places for simulated USD; production token accounting requires token-specific integer precision. Deposits are manual simulations and do not verify revenue origin. Approval updates local accounting only. The UI uses Google Fonts with system-font fallbacks.
+On `/`, roles are simulated in one browser, not authenticated. On `/beta`, provisioned accounts authenticate with passwords and the server enforces roles; all monetary actions remain simulations. Browser storage can be edited and is not an immutable audit trail. Wallet address validation checks format only. Accounting uses two decimal places for simulated USD; production token accounting requires token-specific integer precision. Deposits are manual simulations and do not verify revenue origin. Approval updates local accounting only. The UI uses Google Fonts with system-font fallbacks.
 
 ## Technical review
 
-See [architecture and trust boundaries](docs/ARCHITECTURE.md). Ten automated tests cover the core accounting, policy, lifecycle, storage validation, and export behavior. These are not an independent security audit.
+See [architecture and trust boundaries](docs/ARCHITECTURE.md). Eleven automated tests (including an HTTP integration scenario) cover the core accounting, policy, lifecycle, storage validation, and export behavior. These are not an independent security audit.
 
 ## Planned next steps
 
 1. Validate the workflow with three project teams and refine approval policies.
-2. Add authenticated team roles and persistence with server-side authorization.
+2. Harden the local team beta with a production database, account lifecycle management, and deployment security.
 3. Build and test a minimal on-chain vault with verified token configuration, real multisignature authorization, and constrained payouts.
 4. Deploy to a supported testnet; publish verified contract addresses and transaction evidence.
 5. Complete independent security review before any real-fund release.
