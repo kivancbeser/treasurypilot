@@ -64,6 +64,8 @@ Demo state is stored in localStorage. Reset demo clears it after confirmation. D
 - Budget checks that account for pending reservations.
 - Payment requests, explicit simulated role switching, requester cancellation, approval, and rejection.
 - Treasury health summary showing available funds after pending reservations.
+- Runway scenario planner using user-entered spending and revenue assumptions; not a forecast.
+- Design-partner pilot invitation linking to the founder’s X profile.
 - Payment status filters and CSV export with spreadsheet formula-prefix protection.
 - Guided example workspace, responsive dashboard, and browser-local activity history.
 - Saved-state validation with accounting and reservation consistency checks.
@@ -75,7 +77,7 @@ On `/`, roles are simulated in one browser, not authenticated. On `/beta`, provi
 
 ## Technical review
 
-See [architecture and trust boundaries](docs/ARCHITECTURE.md). Eleven automated tests (including an HTTP integration scenario) cover the core accounting, policy, lifecycle, storage validation, and export behavior. These are not an independent security audit.
+See [architecture and trust boundaries](docs/ARCHITECTURE.md). Twelve automated tests (including an HTTP integration scenario) cover the core accounting, policy, lifecycle, storage validation, and export behavior. These are not an independent security audit.
 
 ## Planned next steps
 

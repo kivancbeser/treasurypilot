@@ -58,3 +58,16 @@ test('zero-address recipients are rejected without reserving any budget', () => 
   assert.throws(() => requestPayment(state, { bucketId: 'development', amount: 100, recipient: '0x' + '0'.repeat(40), purpose: 'Build', requester: 'Kivanc' }));
   assert.equal(state.payments.length, 0);
 });
+
+test('runway uses available funds, excludes final requests and handles zero burn', async () => {
+  const { runwayScenario } = await import('../src/treasury.js');
+  const state = initialState(); deposit(state, 100000);
+  requestPayment(state, { bucketId: 'development', amount: 20000, recipient: wallet, purpose: 'Build', requester: 'Kivanc' });
+  assert.equal(runwayScenario(state, 40000).months, 2);
+  assert.equal(runwayScenario(state, 40000, 40000).months, null);
+  assert.equal(runwayScenario(initialState(), 40000, 50000).months, 0);
+  assert.throws(() => runwayScenario(state, 0));
+  assert.throws(() => runwayScenario(state, 40000, -1));
+  resolvePayment(state, 1, 'Alex', false);
+  assert.equal(runwayScenario(state, 40000).months, 2.5);
+});

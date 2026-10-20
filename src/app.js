@@ -1,4 +1,4 @@
-import { initialState, parseAmount, deposit, requestPayment, resolvePayment, updatePolicy, paymentsCSV, cancelPayment, validateState, exampleState } from './treasury.js';
+import { initialState, parseAmount, deposit, requestPayment, resolvePayment, updatePolicy, paymentsCSV, cancelPayment, validateState, exampleState, runwayScenario } from './treasury.js';
 const key = 'treasurypilot-demo-v1';
 let state = initialState();
 let storageWarning = '';
@@ -6,6 +6,7 @@ try { const raw = localStorage.getItem(key); if (raw) { const saved = JSON.parse
 const money = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n / 100);
 const el = (tag, text, cls) => { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (cls) node.className = cls; return node; };
 function render() {
+  document.querySelector('#runway-result').textContent = 'Enter your assumptions to explore runway.';
   const total = state.buckets.reduce((s, b) => s + b.balance, 0);
   const pending = state.payments.filter(p => p.status === 'pending').reduce((s, p) => s + p.amount, 0);
   document.querySelector('#overview').replaceChildren(...[['Treasury balance', money(total)], ['Lifetime revenue', money(state.income)], ['Awaiting approval', money(pending)]].map(([label, value]) => { const card = el('article', undefined, 'stat'); card.append(el('p', label, 'muted'), el('strong', value)); return card; }));
@@ -58,3 +59,12 @@ document.querySelector('#export').onclick = () => {
 render();
 
 if (storageWarning) document.querySelector('#feedback').textContent = storageWarning;
+
+document.querySelector('#runway').onsubmit = event => {
+  event.preventDefault();
+  try {
+    const data = new FormData(event.target), revenue = data.get('revenue').trim();
+    const result = runwayScenario(state, parseAmount(data.get('cost').trim()), /^(0|0\.0{1,2})$/.test(revenue) ? 0 : parseAmount(revenue));
+    document.querySelector('#runway-result').textContent = result.available === 0 ? 'No unreserved balance available. Record simulated revenue or release a reservation to explore a funded scenario.' : result.months === null ? `Under these assumptions, revenue covers monthly spending. Available balance: ${money(result.available)}. This does not guarantee sustainability.` : `${result.months.toFixed(1)} months of estimated runway · ${money(result.available)} available · ${money(result.netBurn)} assumed monthly net spending. This excludes unexpected costs and changes in revenue.`;
+  } catch (error) { document.querySelector('#runway-result').textContent = error.message; }
+};

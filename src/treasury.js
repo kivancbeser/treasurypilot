@@ -107,3 +107,13 @@ export function exampleState() {
   state.events.unshift('Loaded fictional sample workspace. These entries are not real usage or revenue.');
   return state;
 }
+
+export function runwayScenario(state, monthlyCost, monthlyRevenue = 0) {
+  assert(Number.isSafeInteger(monthlyCost) && monthlyCost > 0, 'Monthly spending must be positive.');
+  assert(Number.isSafeInteger(monthlyRevenue) && monthlyRevenue >= 0, 'Monthly revenue must be zero or positive.');
+  const balance = state.buckets.reduce((sum, b) => sum + b.balance, 0);
+  const reserved = state.payments.filter(p => p.status === 'pending').reduce((sum, p) => sum + p.amount, 0);
+  const available = balance - reserved;
+  const netBurn = monthlyCost - monthlyRevenue;
+  return { available, reserved, netBurn, months: available === 0 ? 0 : netBurn > 0 ? available / netBurn : null };
+}
