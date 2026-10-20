@@ -16,6 +16,8 @@ npm start
 
 Open http://127.0.0.1:4173. Run accounting and approval checks with `npm test`.
 
+![TreasuryPilot dashboard](preview.png)
+
 ## Two-minute walkthrough
 
 1. Allocate 1,000 demo USD. Reserve receives 400, development 300, marketing 200, and community 100.
@@ -28,9 +30,11 @@ Demo state is stored in localStorage. Reset demo clears it. Do not enter sensiti
 
 ## What is implemented
 
-- Fixed 40/30/20/10 allocation policy, with integer-cent accounting and conserved rounding remainder.
+- Editable allocation policy (40/30/20/10 by default) for future revenue, with integer-cent accounting and largest-remainder allocation.
 - Budget checks that account for pending reservations.
 - Payment requests, different-reviewer checks, approval, and rejection.
+- Treasury health summary showing available funds after pending reservations.
+- Payment status filters and CSV export with spreadsheet formula-prefix protection.
 - Responsive dashboard and browser-local activity history.
 - Dependency-free Node test suite and an optional CI workflow example (`ci-workflow.example.yml`).
 
