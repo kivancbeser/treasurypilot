@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { initialState, parseAmount, deposit, requestPayment, resolvePayment } from '../src/treasury.js';
+const wallet = '0x' + 'a'.repeat(40);
+test('decimal inputs are represented as exact cents', () => { assert.equal(parseAmount('0.29'), 29); for (const value of ['0', '-1', 'NaN', '1.001', '1e3']) assert.throws(() => parseAmount(value)); });
+test('allocation conserves every cent including rounding remainder', () => { for (const value of [1, 29, 101, 100000]) { const state = initialState(); deposit(state, value); assert.equal(state.buckets.reduce((s, b) => s + b.balance, 0), value); } });
+test('pending requests reserve budget; self-review and repeated settlement fail', () => { const state = initialState(); deposit(state, 100000); const input = { bucketId: 'development', amount: 20000, recipient: wallet, purpose: 'Build', requester: 'Kivanc' }; const p = requestPayment(state, input); assert.throws(() => requestPayment(state, input), /Insufficient/); assert.throws(() => resolvePayment(state, p.id, 'Kivanc', true), /different/); resolvePayment(state, p.id, 'Alex', true); assert.equal(state.buckets[1].balance, 10000); assert.throws(() => resolvePayment(state, p.id, 'Alex', true)); });
+test('rejection releases reservation without spending budget', () => { const state = initialState(); deposit(state, 100000); const input = { bucketId: 'development', amount: 30000, recipient: wallet, purpose: 'Build', requester: 'Kivanc' }; const p = requestPayment(state, input); resolvePayment(state, p.id, 'Alex', false); assert.equal(state.buckets[1].balance, 30000); assert.doesNotThrow(() => requestPayment(state, input)); });
