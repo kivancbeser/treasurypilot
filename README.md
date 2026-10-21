@@ -8,7 +8,7 @@ The public demo uses simulated browser-local data and requires no account. The a
 
 TreasuryPilot is an early-stage treasury operations prototype for teams launching in emerging ecosystems, including Ascend / Elysium. It demonstrates revenue allocation, budget reservations, two-person payment review, and a readable activity history.
 
-**Status: interactive demo plus an authenticated local team beta. No blockchain integration, wallet authentication, custody, or real transfers. Not affiliated with or endorsed by Ascend, Elysium, or Kinetiq.**
+**Status: interactive demo plus an authenticated local team beta. A Solidity vault is tested locally; the public demo has no wallet connection or onchain execution. No public testnet deployment or real-fund custody is claimed. Not affiliated with or endorsed by Ascend, Elysium, or Kinetiq.**
 
 ## Run locally
 
